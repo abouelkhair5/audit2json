@@ -25,10 +25,10 @@ parser.add_argument('-o', '--output_file', help='Specify a destination file for 
 #
 #
 
-def getTime(line):
-    timestamp = line.replace('msg=audit(','').replace('):','').split(':')
+def getTimeAndID(line):
+    timestamp, id = line.replace('msg=audit(','').replace('):','').split(':')
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(float(timestamp[0])))
-    return timestamp
+    return timestamp, id
 
 def makeReadable(key):
     return{
@@ -64,7 +64,7 @@ def processLine(line):
     attributes = line.split(' ')
     for attribute in attributes:
         if 'msg=audit' in attribute:
-            entry['timestamp'] = getTime(attribute)
+            entry['timestamp'], entry['event_id'] = getTimeAndID(attribute) 
         else:
             try:
                 attribute = attribute.replace('msg=','').replace('\'','').replace('"','').split('=')
