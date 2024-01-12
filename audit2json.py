@@ -48,10 +48,19 @@ def displayStartText():
 def processFile(path, output):
     entries = []
     with open(path,'r') as f:
+        event_id = -1
+        event = []
         for line in f:
-            entry = processLine(line.replace('\n',''))
+            record = processLine(line.replace('\n',''))
             if output:
-                entries.append(entry)
+                # if this is a new event then append the record and update event and id
+                if event_id != record['event_id']:
+                    entries.append(event)
+                    event = [record]
+                    event_id = record['event_id']
+                else: # This is another record in the same event
+                    event.append(record)
+
             else:
                 printResult(entry)
 
